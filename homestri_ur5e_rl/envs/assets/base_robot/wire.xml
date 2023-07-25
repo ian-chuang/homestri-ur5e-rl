@@ -1,0 +1,85 @@
+<!-- Copyright 2021 DeepMind Technologies Limited
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<mujoco>
+    <extension>
+        <plugin plugin="mujoco.elasticity.cable" />
+    </extension>
+
+    <worldbody>
+
+
+        <body name="wall" pos="0 -1 0">
+            <geom type="box" size="1 0.1 1" pos="0 0 1" rgba="0.8 0.6 0.4 1" />
+
+            <!-- Define the attachment points -->
+            <body name="attachment_points" pos="-0.3 0.1 1.25">
+                
+                <!-- quat="-0.7071068 0 0 0.7071068" -->
+                <body name="attachment_point_1" pos="0 0 0">
+                    <geom type="sphere" size="0.03" rgba="1 0 0 1" />
+                    <!-- curve="s sin(s) 0" count="21 1 1" size="0.5 0.3 1" -->
+                    <composite prefix="wire0:" type="cable" offset="0 0 0" initial="none" vertex="
+                    0.0 3.061616997868383e-17 0
+                    0.0034096741493194194 0.04114864757018351 0
+                    0.01354568957484134 0.0811748673011709 0
+                    0.03013156219837776 0.11898684825926842 0
+                    0.052714872650901634 0.15355317817241698 0
+                    0.08067960709356478 0.18393097766828295 0
+                    0.11326296046939333 0.20929161956563216 0
+                    0.14957614383675769 0.22894333166376438 0
+                    0.18862862821480023 0.2423500664848326 0
+                    0.22935516363191694 0.24914612325166746 0
+                    0.2706448363680831 0.24914612325166746 0
+                    0.3113713717851998 0.2423500664848326 0
+                    0.3504238561632424 0.22894333166376435 0
+                    0.3867370395306068 0.20929161956563214 0
+                    0.4193203929064353 0.1839309776682829 0
+                    0.4472851273490984 0.15355317817241695 0
+                    0.46986843780162224 0.11898684825926838 0
+                    0.48645431042515863 0.08117486730117086 0
+                    0.4965903258506806 0.04114864757018347 0
+                    0.5 0.0 0
+                    ">
+                        <plugin plugin="mujoco.elasticity.cable">
+                            <!--Units are in Pa (SI)-->
+                            <config key="twist" value="1e7"/>
+                            <config key="bend" value="4e6"/>
+                            <config key="vmax" value="0.05"/>
+                          </plugin>
+                        <joint kind="main" damping="1" />  
+                        <geom type="capsule" size=".01" rgba=".8 .2 .1 1" condim="1" />
+                    </composite>
+                </body>
+
+                <body name="attachment_point_2" pos="0.5 0 0">
+                    <geom type="sphere" size="0.03" rgba="0 1 0 1" />
+                </body>
+            </body>
+
+        </body>
+
+
+    </worldbody>
+    
+    <equality>
+        <weld body1="wire0:B_last" body2="attachment_point_2"
+             anchor="0 0 0" solref="-1e4 -1e3" />
+    </equality>
+    <contact>
+        <exclude body1="wire0:B_last" body2="attachment_point_2" />
+    </contact>
+
+</mujoco>
