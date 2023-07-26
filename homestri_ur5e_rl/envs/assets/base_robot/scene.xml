@@ -3,6 +3,10 @@
 
   <option integrator="implicitfast" />
 
+  <option timestep="0.002">
+        <flag warmstart="enable"></flag>
+    </option>
+
   <option impratio="10" />
 
   <statistic center="0.3 0 0.4" extent="0.8" />
@@ -20,14 +24,13 @@
     <default class="ur5e">
       <material specular="0.5" shininess="0.25" />
       <joint axis="0 1 0" range="-6.28319 6.28319" armature="0.1" />
-      <!-- velocity integrator actuators -->
-      <general gaintype="fixed" biastype="affine" ctrlrange="-3.1415 3.1415" gainprm="2000"  
-      biasprm="0 -2000 -400" forcerange="-150 150" actrange="-6.2831 6.2831" dyntype="integrator"/>        
+      <!-- position actuators -->
+      <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400"
+        forcerange="-150 150"/>
       <default class="ur5e:size3">
         <default class="ur5e:size3_limited">
-          <joint range="-3.1415 3.1415" />
-          <!-- elbow is joint limited -->
-          <general actrange="-3.1415 3.1415" />
+          <joint range="-3.1415 3.1415"/>
+          <general ctrlrange="-3.1415 3.1415"/>
         </default>
       </default>
       <default class="ur5e:size1">
@@ -218,8 +221,9 @@
                       <geom class="ur5e:eef_collision" pos="0 0.08 0" quat="1 1 0 0"
                         size="0.04 0.02" />
 
-                        
-                      <site name="robot0:ur5e:attachment_site" pos="0 0.1 0" quat="-1 1 0 0" />
+                      <!-- end effector site -->
+                      <site name="robot0:eef_site" pos="0 0.26 0" quat="-1 1 0 0" />
+                      <geom size="0.01" rgba="1 0 0 1" pos="0 0.26 0" quat="-1 1 0 0" contype="0" conaffinity="0" group="2"/>
 
                       <!-- 2f85 -->
                       <body name="robot0:2f85:base_mount" pos="0 0.1 0" quat="-1 1 0 0" childclass="2f85">
