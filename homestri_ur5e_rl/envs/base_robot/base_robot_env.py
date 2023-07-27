@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from homestri_ur5e_rl.controllers.operational_space_controller import OperationalSpaceController
 from gymnasium import spaces
-from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
+from homestri_ur5e_rl.envs.mujoco.mujoco_env import MujocoEnv
 from gymnasium_robotics.utils.mujoco_utils import MujocoModelNames, robot_get_obs
 
 
@@ -108,16 +108,13 @@ class BaseRobot(MujocoEnv):
             self.init_qpos[qpos_id] = joint_pos
 
     def step(self, action):
-        action = np.clip(action, -1.0, 1.0)
-        
-        self.controller.set_target_twist(np.array([0.1, 0, 0, 0, 0, 0]))
+        self.controller.set_target_twist(action[:6])
 
         for i in range(self.frame_skip):
-
             ctrl = np.zeros(self.model.nu)
-
             self.controller.run_controller(ctrl)
-            
+
+            ctrl[6] = action[6]
 
             self.do_simulation(ctrl, n_frames=1)
 

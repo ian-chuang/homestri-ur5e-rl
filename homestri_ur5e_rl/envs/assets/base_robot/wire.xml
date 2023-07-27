@@ -60,7 +60,7 @@
                             <config key="vmax" value="0.05"/>
                           </plugin>
                         <joint kind="main" damping="1" />  
-                        <geom type="capsule" size=".01" rgba=".8 .2 .1 1" condim="1" />
+                        <geom type="capsule" size=".01" rgba=".8 .2 .1 1" condim="1" friction="0.7"/>
                     </composite>
                 </body>
 
