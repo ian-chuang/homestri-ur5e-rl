@@ -25,12 +25,12 @@
       <material specular="0.5" shininess="0.25" />
       <joint axis="0 1 0" range="-6.28319 6.28319" armature="0.1" />
       <!-- position actuators -->
-      <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400"
-        forcerange="-150 150"/>
+      <!-- <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400"
+        forcerange="-150 150"/> -->
       <default class="ur5e:size3">
         <default class="ur5e:size3_limited">
           <joint range="-3.1415 3.1415"/>
-          <general ctrlrange="-3.1415 3.1415"/>
+          <!-- <general ctrlrange="-3.1415 3.1415"/> -->
         </default>
       </default>
       <default class="ur5e:size1">
@@ -387,14 +387,14 @@
   -->
 
   <actuator>
-    <general class="ur5e:size3" name="robot0:ur5e:shoulder_pan"
+    <motor class="ur5e:size3" name="robot0:ur5e:shoulder_pan"
       joint="robot0:ur5e:shoulder_pan_joint" />
-    <general class="ur5e:size3" name="robot0:ur5e:shoulder_lift"
+    <motor class="ur5e:size3" name="robot0:ur5e:shoulder_lift"
       joint="robot0:ur5e:shoulder_lift_joint" />
-    <general class="ur5e:size3_limited" name="robot0:ur5e:elbow" joint="robot0:ur5e:elbow_joint" />
-    <general class="ur5e:size1" name="robot0:ur5e:wrist_1" joint="robot0:ur5e:wrist_1_joint" />
-    <general class="ur5e:size1" name="robot0:ur5e:wrist_2" joint="robot0:ur5e:wrist_2_joint" />
-    <general class="ur5e:size1" name="robot0:ur5e:wrist_3" joint="robot0:ur5e:wrist_3_joint" />
+    <motor class="ur5e:size3_limited" name="robot0:ur5e:elbow" joint="robot0:ur5e:elbow_joint" />
+    <motor class="ur5e:size1" name="robot0:ur5e:wrist_1" joint="robot0:ur5e:wrist_1_joint" />
+    <motor class="ur5e:size1" name="robot0:ur5e:wrist_2" joint="robot0:ur5e:wrist_2_joint" />
+    <motor class="ur5e:size1" name="robot0:ur5e:wrist_3" joint="robot0:ur5e:wrist_3_joint" />
   </actuator>
 
   <actuator>

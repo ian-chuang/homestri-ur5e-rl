@@ -7,11 +7,6 @@ from gymnasium import spaces
 from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
 from gymnasium_robotics.utils.mujoco_utils import MujocoModelNames, robot_get_obs
 
-from homestri_ur5e_rl.utils.transform_utils import (
-    mat2euler,
-    euler2mat,
-)
-
 
 MAX_CARTESIAN_DISPLACEMENT = 0.2
 MAX_ROTATION_DISPLACEMENT = 0.5
@@ -56,7 +51,6 @@ class BaseRobot(MujocoEnv):
             **kwargs,
         )
 
-        self.init_qpos = self.data.qpos.copy()
         self.init_qvel = self.data.qvel.copy()
         self.init_ctrl = self.data.ctrl.copy()
 
@@ -70,11 +64,11 @@ class BaseRobot(MujocoEnv):
         self.model_names = MujocoModelNames(self.model) 
 
         self.controller = OperationalSpaceController(
-            self.model, 
-            self.data, 
-            self.model_names,
-            'robot0:eef_site', 
-            [
+            model=self.model, 
+            data=self.data, 
+            model_names=self.model_names,
+            eef_name='robot0:eef_site', 
+            joint_names=[
                 'robot0:ur5e:shoulder_pan_joint',
                 'robot0:ur5e:shoulder_lift_joint',
                 'robot0:ur5e:elbow_joint',
@@ -82,7 +76,7 @@ class BaseRobot(MujocoEnv):
                 'robot0:ur5e:wrist_2_joint',
                 'robot0:ur5e:wrist_3_joint',
             ],
-            [
+            actuator_names=[
                 'robot0:ur5e:shoulder_pan',
                 'robot0:ur5e:shoulder_lift',
                 'robot0:ur5e:elbow',
@@ -90,8 +84,13 @@ class BaseRobot(MujocoEnv):
                 'robot0:ur5e:wrist_2',
                 'robot0:ur5e:wrist_3',
             ],
-            [500, 500, 500, 500, 500, 500],
-            [0, 0, 0, 0, 0, 0],
+            kp=200.0,
+            ko=200.0,
+            kv=50.0,
+            vmax_xyz=1,
+            vmax_abg=5,
+            ctrl_dof=[True, True, True, True, True, True],
+            null_damp_kv=10,
         )
 
 
@@ -108,33 +107,16 @@ class BaseRobot(MujocoEnv):
             qpos_id = self.model.jnt_qposadr[joint_id]
             self.init_qpos[qpos_id] = joint_pos
 
-        self.init_ctrl_config = {
-            "robot0:ur5e:shoulder_pan": 0,
-            "robot0:ur5e:shoulder_lift": -np.pi / 2.0,
-            "robot0:ur5e:elbow": -np.pi / 2.0,
-            "robot0:ur5e:wrist_1": -np.pi / 2.0,
-            "robot0:ur5e:wrist_2": np.pi / 2.0,
-            "robot0:ur5e:wrist_3": 0,
-        }
-        for actuator_name, actuator_pos in self.init_ctrl_config.items():
-            actuator_id = self.model_names.actuator_name2id[actuator_name]
-            self.init_ctrl[actuator_id] = actuator_pos
-
-
     def step(self, action):
         action = np.clip(action, -1.0, 1.0)
-
-        pos = np.array([-0.134, -.1, 1.4])
-        ori =  np.array([0, np.pi, 0])
         
-        self.controller.set_goal(pos, euler2mat(ori))
+        self.controller.set_target_twist(np.array([0.1, 0, 0, 0, 0, 0]))
 
         for i in range(self.frame_skip):
 
-            joint_pos, joint_vel = self.controller.run_controller()
-
             ctrl = np.zeros(self.model.nu)
-            ctrl[self.controller.get_actuator_ids()] = joint_pos
+
+            self.controller.run_controller(ctrl)
             
 
             self.do_simulation(ctrl, n_frames=1)
@@ -157,10 +139,7 @@ class BaseRobot(MujocoEnv):
     def reset_model(self):
         qpos = self.init_qpos
         qvel = self.init_qvel
-        
-        self.data.ctrl[:] = self.init_ctrl
         self.set_state(qpos, qvel)
         obs = self._get_obs()
-        self.controller.reset_controller()
 
         return obs
