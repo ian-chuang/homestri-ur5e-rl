@@ -9,12 +9,10 @@ keyboard_input = KeyboardInput()
 env = gym.make("BaseRobot-v0", render_mode="human")
 
 observation, info = env.reset(seed=42)
-for _ in range(1000):
+while True:
     action = env.action_space.sample()
 
     action = keyboard_input.get_action()
-
-    print(action)
 
     observation, reward, terminated, truncated, info = env.step(action)
 

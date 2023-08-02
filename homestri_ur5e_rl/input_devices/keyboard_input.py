@@ -14,22 +14,22 @@ class KeyboardInput:
             key_char = key.char.lower()
             if key_char in ['w', 'a', 's', 'd', 'q', 'e']:
                 linear_mapping = {
-                    'w': [0.2, 0, 0],
-                    's': [-0.2, 0, 0],
-                    'a': [0, 0.2, 0],
-                    'd': [0, -0.2, 0],
-                    'q': [0, 0, 0.2],
-                    'e': [0, 0, -0.2],
+                    'w': [0.05, 0, 0],
+                    's': [-0.05, 0, 0],
+                    'a': [0, 0.05, 0],
+                    'd': [0, -0.05, 0],
+                    'q': [0, 0, 0.05],
+                    'e': [0, 0, -0.05],
                 }
                 self.linear_velocity = np.array(linear_mapping[key_char])
             elif key_char in ['i', 'j', 'k', 'l', 'u', 'o']:
                 angular_mapping = {
-                    'i': [0.5, 0, 0],
-                    'k': [-0.5, 0, 0],
-                    'j': [0, 0.5, 0],
-                    'l': [0, -0.5, 0],
-                    'u': [0, 0, 0.5],
-                    'o': [0, 0, -0.5],
+                    'i': [0.25, 0, 0],
+                    'k': [-0.25, 0, 0],
+                    'j': [0, 0.25, 0],
+                    'l': [0, -0.25, 0],
+                    'u': [0, 0, 0.25],
+                    'o': [0, 0, -0.25],
                 }
                 self.angular_velocity = np.array(angular_mapping[key_char])
 
