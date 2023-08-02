@@ -2,14 +2,13 @@ from os import path
 import sys
 
 import numpy as np
-from homestri_ur5e_rl.controllers.operational_space_controller import OperationalSpaceController
+from homestri_ur5e_rl.controllers.operational_space_controller import OperationalSpaceController, TargetType
+from homestri_ur5e_rl.controllers.joint_effort_controller import JointEffortController
+from homestri_ur5e_rl.controllers.joint_velocity_controller import JointVelocityController
+from homestri_ur5e_rl.controllers.joint_position_controller import JointPositionController
 from gymnasium import spaces
 from homestri_ur5e_rl.envs.mujoco.mujoco_env import MujocoEnv
 from gymnasium_robotics.utils.mujoco_utils import MujocoModelNames, robot_get_obs
-
-
-MAX_CARTESIAN_DISPLACEMENT = 0.2
-MAX_ROTATION_DISPLACEMENT = 0.5
 
 DEFAULT_CAMERA_CONFIG = {
     "distance": 2.2,
@@ -17,7 +16,6 @@ DEFAULT_CAMERA_CONFIG = {
     "elevation": -20.0,
     "lookat": np.array([0, 0, 1]),
 }
-
 
 class BaseRobot(MujocoEnv):
     metadata = {
@@ -84,6 +82,9 @@ class BaseRobot(MujocoEnv):
                 'robot0:ur5e:wrist_2',
                 'robot0:ur5e:wrist_3',
             ],
+            min_effort=[-150, -150, -150, -150, -150, -150],
+            max_effort=[150, 150, 150, 150, 150, 150],
+            target_type=TargetType.TWIST,
             kp=200.0,
             ko=200.0,
             kv=50.0,
@@ -92,6 +93,91 @@ class BaseRobot(MujocoEnv):
             ctrl_dof=[True, True, True, True, True, True],
             null_damp_kv=10,
         )
+
+
+        # self.controller = JointEffortController(
+        #     model=self.model, 
+        #     data=self.data, 
+        #     model_names=self.model_names,
+        #     eef_name='robot0:eef_site', 
+        #     joint_names=[
+        #         'robot0:ur5e:shoulder_pan_joint',
+        #         'robot0:ur5e:shoulder_lift_joint',
+        #         'robot0:ur5e:elbow_joint',
+        #         'robot0:ur5e:wrist_1_joint',
+        #         'robot0:ur5e:wrist_2_joint',
+        #         'robot0:ur5e:wrist_3_joint',
+        #     ],
+        #     actuator_names=[
+        #         'robot0:ur5e:shoulder_pan',
+        #         'robot0:ur5e:shoulder_lift',
+        #         'robot0:ur5e:elbow',
+        #         'robot0:ur5e:wrist_1',
+        #         'robot0:ur5e:wrist_2',
+        #         'robot0:ur5e:wrist_3',
+        #     ],
+        #     min_effort=[-150, -150, -150, -150, -150, -150],
+        #     max_effort=[150, 150, 150, 150, 150, 150],
+        # )
+
+        # self.controller = JointVelocityController(
+        #     model=self.model, 
+        #     data=self.data, 
+        #     model_names=self.model_names,
+        #     eef_name='robot0:eef_site', 
+        #     joint_names=[
+        #         'robot0:ur5e:shoulder_pan_joint',
+        #         'robot0:ur5e:shoulder_lift_joint',
+        #         'robot0:ur5e:elbow_joint',
+        #         'robot0:ur5e:wrist_1_joint',
+        #         'robot0:ur5e:wrist_2_joint',
+        #         'robot0:ur5e:wrist_3_joint',
+        #     ],
+        #     actuator_names=[
+        #         'robot0:ur5e:shoulder_pan',
+        #         'robot0:ur5e:shoulder_lift',
+        #         'robot0:ur5e:elbow',
+        #         'robot0:ur5e:wrist_1',
+        #         'robot0:ur5e:wrist_2',
+        #         'robot0:ur5e:wrist_3',
+        #     ],
+        #     min_effort=[-150, -150, -150, -150, -150, -150],
+        #     max_effort=[150, 150, 150, 150, 150, 150],
+        #     min_velocity=[-1, -1, -1, -1, -1, -1],
+        #     max_velocity=[1, 1, 1, 1, 1, 1],
+        #     kp=[100, 100, 100, 100, 100, 100],
+        #     ki=0.0,
+        #     kd=0.0,
+        # )
+
+        # self.controller = JointPositionController(
+        #     model=self.model, 
+        #     data=self.data, 
+        #     model_names=self.model_names,
+        #     eef_name='robot0:eef_site', 
+        #     joint_names=[
+        #         'robot0:ur5e:shoulder_pan_joint',
+        #         'robot0:ur5e:shoulder_lift_joint',
+        #         'robot0:ur5e:elbow_joint',
+        #         'robot0:ur5e:wrist_1_joint',
+        #         'robot0:ur5e:wrist_2_joint',
+        #         'robot0:ur5e:wrist_3_joint',
+        #     ],
+        #     actuator_names=[
+        #         'robot0:ur5e:shoulder_pan',
+        #         'robot0:ur5e:shoulder_lift',
+        #         'robot0:ur5e:elbow',
+        #         'robot0:ur5e:wrist_1',
+        #         'robot0:ur5e:wrist_2',
+        #         'robot0:ur5e:wrist_3',
+        #     ],
+        #     min_effort=[-150, -150, -150, -150, -150, -150],
+        #     max_effort=[150, 150, 150, 150, 150, 150],
+        #     min_position=[-1, -1, -1, -1, -1, -1],
+        #     max_position=[1, 1, 1, 1, 1, 1],
+        #     kp=[100, 100, 100, 100, 100, 100],
+        #     kd=[20, 20, 20, 20, 20, 20],
+        # )
 
 
         self.init_qpos_config = {
@@ -108,11 +194,11 @@ class BaseRobot(MujocoEnv):
             self.init_qpos[qpos_id] = joint_pos
 
     def step(self, action):
-        self.controller.set_target_twist(action[:6])
+        # action = np.array([0,0,0,0,0,0.5,1])
 
         for i in range(self.frame_skip):
-            ctrl = np.zeros(self.model.nu)
-            self.controller.run_controller(ctrl)
+            ctrl = self.data.ctrl.copy()
+            self.controller.run(action[:6], ctrl)
 
             ctrl[6] = action[6]
 
