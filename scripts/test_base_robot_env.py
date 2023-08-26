@@ -20,4 +20,3 @@ while True:
         observation, info = env.reset()
 
 env.close()
-
