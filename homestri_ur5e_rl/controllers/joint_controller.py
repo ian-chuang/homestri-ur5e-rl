@@ -5,7 +5,7 @@ from homestri_ur5e_rl.utils.mujoco_utils import MujocoModelNames
 from typing import List
 import numpy as np
 
-class BaseController:
+class JointController:
     def __init__(
         self,
         model: MjModel,

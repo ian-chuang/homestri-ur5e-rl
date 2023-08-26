@@ -4,14 +4,15 @@
   <option integrator="implicitfast" />
 
   <option timestep="0.002">
-        <flag warmstart="enable"></flag>
-    </option>
+    <flag warmstart="enable"></flag>
+  </option>
 
   <option impratio="10" />
 
   <statistic center="0.3 0 0.4" extent="0.8" />
 
   <include file="wire.xml"/>
+  <!-- <include file="table.xml"/> -->
 
   <visual>
     <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0 0 0" />
@@ -25,11 +26,12 @@
       <material specular="0.5" shininess="0.25" />
       <joint axis="0 1 0" range="-6.28319 6.28319" armature="0.1" />
       <!-- position actuators -->
-      <!-- <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000" biasprm="0 -2000 -400"
+      <!-- <general gaintype="fixed" biastype="affine" ctrlrange="-6.2831 6.2831" gainprm="2000"
+      biasprm="0 -2000 -400"
         forcerange="-150 150"/> -->
       <default class="ur5e:size3">
         <default class="ur5e:size3_limited">
-          <joint range="-3.1415 3.1415"/>
+          <joint range="-3.1415 3.1415" />
           <!-- <general ctrlrange="-3.1415 3.1415"/> -->
         </default>
       </default>
@@ -223,10 +225,12 @@
 
                       <!-- end effector site -->
                       <site name="robot0:eef_site" pos="0 0.26 0" quat="-1 1 0 0" />
-                      <geom size="0.01" rgba="1 0 0 1" pos="0 0.26 0" quat="-1 1 0 0" contype="0" conaffinity="0" group="2"/>
+                      <geom size="0.01" rgba="1 0 0 1" pos="0 0.26 0" quat="-1 1 0 0" contype="0"
+                        conaffinity="0" group="2" />
 
                       <!-- 2f85 -->
-                      <body name="robot0:2f85:base_mount" pos="0 0.1 0" quat="-1 1 0 0" childclass="2f85">
+                      <body name="robot0:2f85:base_mount" pos="0 0.1 0" quat="-1 1 0 0"
+                        childclass="2f85">
                         <geom class="2f85:visual" mesh="2f85:base_mount" material="2f85:black" />
                         <geom class="2f85:collision" mesh="2f85:base_mount" />
                         <body name="robot0:2f85:base" pos="0 0 0.0038" quat="1 0 0 -1">
@@ -402,6 +406,11 @@
       forcerange="-5 5" ctrlrange="0 255"
       gainprm="0.3137255 0 0" biasprm="0 -100 -10" />
   </actuator>
+
+  <sensor>
+    <force name="robot0:eef_force" site="robot0:eef_site" cutoff="50" />
+    <torque name="robot0:eef_torque" site="robot0:eef_site" cutoff="10" />
+  </sensor>
 
   <!-- <keyframe>
     <key name="robot0:ur5e:home" qpos="-1.5708 -1.5708 1.5708 -1.5708 -1.5708 0"

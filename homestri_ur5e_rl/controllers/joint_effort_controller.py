@@ -1,12 +1,12 @@
 # Import necessary modules and classes
-from homestri_ur5e_rl.controllers.base_controller import BaseController
+from homestri_ur5e_rl.controllers.joint_controller import JointController
 from mujoco._structs import MjModel
 from mujoco._structs import MjData
 from homestri_ur5e_rl.utils.mujoco_utils import MujocoModelNames
 from typing import List
 import numpy as np
 
-class JointEffortController(BaseController):
+class JointEffortController(JointController):
     def __init__(
         self,
         model: MjModel,

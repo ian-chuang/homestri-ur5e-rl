@@ -20,8 +20,8 @@ class JointVelocityController(JointEffortController):
         min_velocity: List[float],
         max_velocity: List[float],
         kp: List[float], 
-        kd: List[float], 
         ki: List[float], 
+        kd: List[float], 
         antiwindup: bool = False,
         max_integral: float = 10.0,
     ) -> None:
